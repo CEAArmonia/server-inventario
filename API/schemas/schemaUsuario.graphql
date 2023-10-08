@@ -1,0 +1,40 @@
+scalar Date
+
+type Usuario {
+    id: ID
+    nombre: String
+    telefono: String
+    ci: String
+    password: String
+    bitacoras: [Bitacora]
+}
+
+type Bitacora {
+    id: ID
+    fecha: Date
+    usuarioId: Usuario
+}
+
+input RegistroUsuarioInput {
+    nombre: String
+    telefono: String
+    ci: String
+    password: String
+}
+
+input LoguearUsuarioInput {
+    ci: String
+    password: String
+}
+
+type Query {
+    obtenerUsuarios: [Usuario]
+    obtenerAccesos(userId: ID): Usuario
+}
+
+type Mutation {
+    agregarUsuario(input: RegistroUsuarioInput): Boolean
+    loguearUsuario(input: LoguearUsuarioInput): String
+    editarUsuario(input: RegistroUsuarioInput): Boolean
+    eliminarUsuario(id: ID): Boolean
+}

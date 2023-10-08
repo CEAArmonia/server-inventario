@@ -1,0 +1,30 @@
+type Responsable {
+    id: ID
+    nombre: String
+    ci: String
+    cargo: String
+    telefono: String
+}
+
+type Asignado {
+    id: ID
+    fecha: Date
+    responsableId: Responsable
+    itemId: Item
+}
+
+input ResponsableInput {
+    nombre: String
+    ci: String
+    cargo: String
+    telefono: String
+}
+
+type Query {
+    obtenerResponsables:[Responsable]
+}
+
+type Mutation {
+    agregarResponsable(input: ResponsableInput): Boolean
+    asignarItemResponsable(responsableID: ID itemId: ID): Boolean
+}

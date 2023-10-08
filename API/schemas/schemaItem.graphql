@@ -1,0 +1,70 @@
+scalar Double 
+
+type Item {
+    id: ID
+    codigo: String
+    nombre: String
+    desc: String
+    fechaCompra: String
+    valor: Double
+    ubicacion: String
+    estado: String
+    observaciones: String
+    tiempoVida: Int
+    mantenimientos: [Date]
+    tipo: TipoItem
+}
+
+type TipoItem {
+    id: ID
+    nombre: String
+}
+
+type Dependencia {
+    id: ID
+    nombre: String
+    desc: String
+}
+
+type Pertenece {
+    id: ID
+    idDependencia: Dependencia
+    idItem: Item
+}
+
+input ItemInput {
+    codigo: String
+    nombre: String
+    desc: String
+    fechaCompra: String
+    valor: Double
+    ubicacion: String
+    estado: String
+    observaciones: String
+    tiempoVida: Int
+    tipo: String
+}
+
+input DependenciaInput {
+    nombre: String
+    desc: String
+}
+
+type Query {
+    obtenerItems: [Item]
+    obtenerTiposItem: [TipoItem]
+    obtenerMantenimientos(id: ID): [Date]
+    obtenerItemsPorEstado(estado: String): [Item]
+    obtenerDependencias (nombre: String): [Dependencia]
+}
+
+type Mutation {
+    agregarItem (input: ItemInput): Boolean
+    agregarTipoItem (nombre: String): Boolean
+    editarItem (id: ID input: ItemInput): Boolean
+    agregarMantenimiento (id: ID fecha: Date): Boolean
+    eliminarMantenimientos (id: ID): Boolean
+    editarMantenimientos (id: ID, fecha: Date): Boolean
+    agregarDependencias ( input: DependenciaInput): Boolean
+    asignarPertenencia (itemId: ID, dependenciaId: ID): String
+}
