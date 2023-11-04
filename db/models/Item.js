@@ -6,13 +6,18 @@ const schemaItem = mongoose.Schema({
     },
 
     nombre: {
-        type: Number,
+        type: String,
         default: 'nombre de producto'
     },
 
     desc: {
         type: String,
         default: 'Item registrado'
+    },
+
+    cantidad: {
+        type: Number,
+        default: 0
     },
 
     fechaCompra: {
@@ -32,6 +37,7 @@ const schemaItem = mongoose.Schema({
 
     obs: {
         type: String,
+        default: ''
     },
 
     periodoMant: {

@@ -5,9 +5,15 @@ const schemaPertenece = mongoose.Schema({
         ref: 'Item' 
     },
 
+    cantidad: {
+        type: Number,
+        default: 0,
+    },
+
     dependenciaId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Dependencia'
     }
 })
+
 module.exports =  mongoose.model( 'Pertenece' , schemaPertenece)

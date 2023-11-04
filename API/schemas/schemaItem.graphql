@@ -1,15 +1,16 @@
-scalar Double 
+scalar Double, 
 
 type Item {
     id: ID
     codigo: String
     nombre: String
     desc: String
-    fechaCompra: String
+    cantidad: Int
+    fechaCompra: Date
     valor: Double
     ubicacion: String
-    estado: String
-    observaciones: String
+    estado: Boolean
+    obs: String
     tiempoVida: Int
     mantenimientos: [Date]
     tipo: TipoItem
@@ -29,6 +30,7 @@ type Dependencia {
 type Pertenece {
     id: ID
     idDependencia: Dependencia
+    cantidad: Int
     idItem: Item
 }
 
@@ -36,11 +38,12 @@ input ItemInput {
     codigo: String
     nombre: String
     desc: String
-    fechaCompra: String
+    fechaCompra: Date
+    cantidad: Int
     valor: Double
     ubicacion: String
     estado: String
-    observaciones: String
+    obs: String
     tiempoVida: Int
     tipo: String
 }
@@ -52,19 +55,24 @@ input DependenciaInput {
 
 type Query {
     obtenerItems: [Item]
+    obtenerItemsPorNombre(nombre: String): [Item]
     obtenerTiposItem: [TipoItem]
     obtenerMantenimientos(id: ID): [Date]
     obtenerItemsPorEstado(estado: String): [Item]
     obtenerDependencias (nombre: String): [Dependencia]
+    obtenerPertenencias (id: ID): [Pertenece]
 }
 
 type Mutation {
-    agregarItem (input: ItemInput): Boolean
-    agregarTipoItem (nombre: String): Boolean
+    agregarItem (input: ItemInput): Item
+    agregarTipoItem (nombre: String): TipoItem
+    eliminarTipoItem (id: String): TipoItem
     editarItem (id: ID input: ItemInput): Boolean
     agregarMantenimiento (id: ID fecha: Date): Boolean
     eliminarMantenimientos (id: ID): Boolean
     editarMantenimientos (id: ID, fecha: Date): Boolean
-    agregarDependencias ( input: DependenciaInput): Boolean
-    asignarPertenencia (itemId: ID, dependenciaId: ID): String
+    agregarDependencias ( input: DependenciaInput): Dependencia
+    editarDependencia (id: ID input: DependenciaInput): Boolean
+    eliminarDependecia (id: ID): Dependencia
+    asignarPertenencia (idItem: ID idDependencia: ID cantidad: Int): String
 }

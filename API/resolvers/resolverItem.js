@@ -8,8 +8,19 @@ const resolverItem = {
     Query: {
         obtenerItems: async (_, { }) => {
             try {
-                const items = await Item.find()
+                const items = await Item.find().sort({ nombre: 1 })
                 return items;
+            } catch (error) {
+                console.log(error.toString())
+                return null
+            }
+        },
+
+        obtenerItemsPorNombre: async (_, { nombre }) => {
+            try {
+                const items = await Item.find({ nombre: { $regex: '.*' + nombre + '.*' } })
+                    .sort({ nombre: 1 })
+                return items
             } catch (error) {
                 console.log(error.toString())
                 return null
@@ -18,7 +29,7 @@ const resolverItem = {
 
         obtenerTiposItem: async (_, { }) => {
             try {
-                const tiposItem = await TipoItem.find()
+                const tiposItem = await TipoItem.find().sort({ nombre: 1 })
                 return tiposItem
             } catch (error) {
                 console.log(error.toString())
@@ -53,29 +64,63 @@ const resolverItem = {
                 { nombre: { $regex: '.*' + nombre + '.*' } })
                 .sort({ nombre: 1 })
             return dependencias
+        },
+
+        obtenerPertenencias: async (_, { id }) => {
+            const pertenencias = await Pertenece.find({idDependencia: id})
+            return pertenencias;
+        }
+    },
+
+    Item: {
+        tipo: async (parent) => {
+            return await TipoItem.findById(parent.tipo)
         }
     },
 
     Mutation: {
         agregarItem: async (_, { input }) => {
-            const item = new Item({ input })
+            const item = new Item()
+            item.codigo = input.codigo
+            item.nombre = input.nombre
+            item.desc = input.desc
+            item.fechaCompra = input.fechaCompra
+            item.valor = input.valor
+            item.ubicacion = input.ubicacion
+            item.estado = input.estado == "Activo" ? true : false
+            item.obs = input.obs
+            item.tiempoVida = input.tiempoVida
+            item.tipo = input.tipo
+            item.cantidad = input.cantidad
             try {
                 await item.save()
-                return true
+                return item
             } catch (error) {
                 console.log(error.toString())
-                return false
+                return null
             }
         },
 
         agregarTipoItem: async (_, { nombre }) => {
-            try {
-                const tiposItem = await new TipoItem(nombre)
-                tiposItem.save()
-                return true
-            } catch (error) {
-                console.log(error.toString())
-                return false
+            const tipo = await TipoItem.findOne({ nombre: nombre })
+            if (!tipo) {
+                try {
+                    const tiposItem = new TipoItem()
+                    tiposItem.nombre = nombre
+                    tiposItem.save()
+                    return tiposItem
+                } catch (error) {
+                    console.log(error.toString())
+                }
+            } else {
+                return null
+            }
+        },
+
+        eliminarTipoItem: async (_, { id }) => {
+            const tipo = await TipoItem.findByIdAndDelete(id)
+            if (tipo) {
+                return tipo
             }
         },
 
@@ -154,16 +199,35 @@ const resolverItem = {
                 try {
                     const nuevaDependencia = new Dependencia(input)
                     await nuevaDependencia.save()
-                    return true
+                    return nuevaDependencia
                 } catch (error) {
                     console.log(error.toString())
-                    return false
+                    return null
                 }
             }
             return null
         },
 
-        asignarPertenencia: async (_, { idItem, idDependencia }) => {
+        editarDependencia:async (_, { id, input }) => {
+            const dependencia = await Dependencia.findById(id)
+            if(dependencia){
+                dependencia.nombre = input.nombre
+                dependencia.desc = input.desc
+                await dependencia.save()
+                return true
+            }
+            return false
+        },
+
+        eliminarDependecia: async (_, { id }) => {
+            const dependenciaEliminar = await Dependencia.findByIdAndDelete(id)
+            if (dependenciaEliminar){
+                return dependenciaEliminar
+            }
+            return null
+        },
+
+        asignarPertenencia: async (_, { idItem, idDependencia, cantidad }) => {
             try {
                 const item = await Item.findById(idItem)
                 const dependencia = await Dependencia.findById(idDependencia)
@@ -173,14 +237,13 @@ const resolverItem = {
                 if (!dependencia) {
                     return 'No-Dependencia'
                 }
-                const pertenece = new Pertenece({ idItem, idDependencia })
+                const pertenece = new Pertenece({ idItem, idDependencia, cantidad })
                 await pertenece.save()
                 return 'ok'
             } catch (error) {
                 console.log(error.toString())
-                return 'error'
+                return error.toString()
             }
-
         }
     }
 }
