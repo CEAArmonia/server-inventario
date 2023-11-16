@@ -29,9 +29,12 @@ type Dependencia {
 
 type Pertenece {
     id: ID
-    idDependencia: Dependencia
+    dependencia: Dependencia
     cantidad: Int
-    idItem: Item
+    fecha: Date
+    fecha_retorno: Date
+    retornado: Boolean
+    item: Item
 }
 
 input ItemInput {
@@ -56,10 +59,12 @@ input DependenciaInput {
 type Query {
     obtenerItems: [Item]
     obtenerItemsPorNombre(nombre: String): [Item]
+    obtenerItemPorId (id: ID): Item
     obtenerTiposItem: [TipoItem]
     obtenerMantenimientos(id: ID): [Date]
     obtenerItemsPorEstado(estado: String): [Item]
     obtenerDependencias (nombre: String): [Dependencia]
+    obtenerDependenciaPorId (id: ID): Dependencia
     obtenerPertenencias (id: ID): [Pertenece]
 }
 
@@ -74,5 +79,6 @@ type Mutation {
     agregarDependencias ( input: DependenciaInput): Dependencia
     editarDependencia (id: ID input: DependenciaInput): Boolean
     eliminarDependecia (id: ID): Dependencia
-    asignarPertenencia (idItem: ID idDependencia: ID cantidad: Int): String
+    asignarPertenencia (itemId: ID dependenciaId: ID cantidad: Int): Pertenece
+    retornoPertenencia (pertenenciaId: ID): Pertenece
 }

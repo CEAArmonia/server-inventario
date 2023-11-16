@@ -27,6 +27,16 @@ const resolverItem = {
             }
         },
 
+        obtenerItemPorId: async (_, { id }) => {
+            try {
+                const item = await Item.findById(id)
+                return item
+            } catch (error) {
+                console.log(error.toString())
+                return null
+            }
+        },
+
         obtenerTiposItem: async (_, { }) => {
             try {
                 const tiposItem = await TipoItem.find().sort({ nombre: 1 })
@@ -66,8 +76,18 @@ const resolverItem = {
             return dependencias
         },
 
+        obtenerDependenciaPorId: async  (_,{ id } ) => {
+            try {
+                const dependencia = await Dependencia.findById(id);
+                return dependencia;
+            }catch (err){
+                console.log(err.toString());
+                return null;
+            }
+        },
+
         obtenerPertenencias: async (_, { id }) => {
-            const pertenencias = await Pertenece.find({idDependencia: id})
+            const pertenencias = await Pertenece.find({dependencia: id}).sort({fecha: -1})
             return pertenencias;
         }
     },
@@ -75,6 +95,16 @@ const resolverItem = {
     Item: {
         tipo: async (parent) => {
             return await TipoItem.findById(parent.tipo)
+        }
+    },
+
+    Pertenece: {
+        item: async (parent) => {
+            return await Item.findById(parent.item)
+        },
+
+        dependencia: async (parent) => {
+            return await Dependencia.findById(parent.dependencia)
         }
     },
 
@@ -227,23 +257,40 @@ const resolverItem = {
             return null
         },
 
-        asignarPertenencia: async (_, { idItem, idDependencia, cantidad }) => {
+        asignarPertenencia: async (_, { itemId, dependenciaId, cantidad }) => {
             try {
-                const item = await Item.findById(idItem)
-                const dependencia = await Dependencia.findById(idDependencia)
-                if (!item) {
-                    return 'No-Item'
+                const item = await Item.findById(itemId)
+                const dependencia = await Dependencia.findById(dependenciaId)
+                if (!item && !dependencia && (item.cantidad < cantidad)) {
+                    return null
                 }
-                if (!dependencia) {
-                    return 'No-Dependencia'
-                }
-                const pertenece = new Pertenece({ idItem, idDependencia, cantidad })
+                const pertenece = new Pertenece()
+                pertenece.item = itemId
+                pertenece.dependencia = dependenciaId
+                pertenece.cantidad = cantidad
+                item.cantidad = item.cantidad - cantidad
                 await pertenece.save()
-                return 'ok'
+                await item.save()
+                return pertenece
             } catch (error) {
                 console.log(error.toString())
-                return error.toString()
+                return null
             }
+        },
+
+        retornoPertenencia: async (_, { pertenenciaId }) => {
+            const pertenencia = await Pertenece.findById(pertenenciaId)
+            //console.log(pertenencia)
+            if (pertenencia){
+                const item = await Item.findById(pertenencia.item)
+                item.cantidad = item.cantidad + pertenencia.cantidad
+                pertenencia.fecha_retorno = Date.now()
+                pertenencia.retornado = true;
+                await item.save()
+                await pertenencia.save()
+                return pertenencia
+            }
+            return null
         }
     }
 }
