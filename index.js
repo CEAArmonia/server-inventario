@@ -23,8 +23,10 @@ module.exports = app;
 async function start() {
     conectarDB();
     const server = new ApolloServer({
-        cache: 'bounded',
-        persistedQueries: false,
+        //cache: 'bounded',
+        persistedQueries: {
+            cache: 'bounded'
+        },
         typeDefs: [
             gql(fs.readFileSync(pathSchemaUsuario, 'utf-8')),
             gql(fs.readFileSync(pathSchemaItem, 'utf-8')),
