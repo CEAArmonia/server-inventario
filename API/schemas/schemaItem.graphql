@@ -66,6 +66,7 @@ type Query {
     obtenerDependencias (nombre: String): [Dependencia]
     obtenerDependenciaPorId (id: ID): Dependencia
     obtenerPertenencias (id: ID): [Pertenece]
+    obtenerItemsCantidad: [Item]
 }
 
 type Mutation {
@@ -81,4 +82,5 @@ type Mutation {
     eliminarDependecia (id: ID): Dependencia
     asignarPertenencia (itemId: ID dependenciaId: ID cantidad: Int): Pertenece
     retornoPertenencia (pertenenciaId: ID): Pertenece
+    agregarCantidadesItem (itemId: ID, cantidad: Int): Item
 }

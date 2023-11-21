@@ -6,13 +6,15 @@ type Usuario {
     telefono: String
     ci: String
     password: String
+    administrador: Boolean
+    activo: Boolean
     bitacoras: [Bitacora]
 }
 
 type Bitacora {
     id: ID
     fecha: Date
-    usuarioId: Usuario
+    usuario: Usuario
 }
 
 input RegistroUsuarioInput {
@@ -20,6 +22,7 @@ input RegistroUsuarioInput {
     telefono: String
     ci: String
     password: String
+    administrador: Boolean
 }
 
 input LoguearUsuarioInput {
@@ -30,11 +33,13 @@ input LoguearUsuarioInput {
 type Query {
     obtenerUsuarios: [Usuario]
     obtenerAccesos(userId: ID): Usuario
+    obtenerBitacoras: [Bitacora]
+    obtenerBitacorasPorUsuario(usuarioId: ID): [Bitacora]
 }
 
 type Mutation {
-    agregarUsuario(input: RegistroUsuarioInput): Boolean
+    agregarUsuario(input: RegistroUsuarioInput): Usuario
     loguearUsuario(input: LoguearUsuarioInput): String
-    editarUsuario(input: RegistroUsuarioInput): Boolean
+    editarUsuario(input: RegistroUsuarioInput): Usuario
     eliminarUsuario(id: ID): Boolean
 }

@@ -18,6 +18,11 @@ const schemaAsignado = mongoose.Schema({
     cantidad: {
         type: Number,
         default: 0
+    },
+
+    retornado: {
+        type: Boolean,
+        default: false
     }
 })
 

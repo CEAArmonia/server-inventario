@@ -11,6 +11,8 @@ type Asignado {
     fecha: Date
     responsableId: Responsable
     itemId: Item
+    cantidad: Int
+    retornado: Boolean
 }
 
 input ResponsableInput {
@@ -20,11 +22,22 @@ input ResponsableInput {
     telefono: String
 }
 
+input AsignarItemResponsableInput {
+    itemId: ID
+    ci: String
+    nombre: String
+    cargo: String
+    telefono: String
+    cantidad: Int
+}
+
 type Query {
     obtenerResponsables:[Responsable]
+    obtenerResponsablesPorCi(ci: String): [Responsable]
 }
 
 type Mutation {
     agregarResponsable(input: ResponsableInput): Boolean
-    asignarItemResponsable(responsableID: ID itemId: ID): Boolean
+    asignarItemResponsable(input: AsignarItemResponsableInput): Boolean
+
 }

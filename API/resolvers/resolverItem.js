@@ -89,6 +89,11 @@ const resolverItem = {
         obtenerPertenencias: async (_, { id }) => {
             const pertenencias = await Pertenece.find({dependencia: id}).sort({fecha: -1})
             return pertenencias;
+        },
+
+        obtenerItemsCantidad: async (_, {}) => {
+            const items = await Item.find({cantidad: {$lte: 10}}).sort({cantidad: 1})
+            return items
         }
     },
 
@@ -291,6 +296,14 @@ const resolverItem = {
                 return pertenencia
             }
             return null
+        },
+
+        agregarCantidadesItem: async (_, { itemId, cantidad }) => {
+            const item = await Item.findById(itemId)
+            item.cantidad += cantidad
+            item.fechaCompra = Date.now()
+            await item.save()
+            return item
         }
     }
 }

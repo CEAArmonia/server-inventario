@@ -20,6 +20,16 @@ const schemaUsuario = mongoose.Schema({
         required: [true, 'password obligatorio']
     },
 
+    administrador: {
+        type: Boolean,
+        default: false
+    },
+
+    activo: {
+        type: Boolean,
+        default: false,
+    },
+
     bitacoras: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Bitacora'

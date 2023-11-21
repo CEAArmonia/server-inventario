@@ -5,7 +5,7 @@ const schemaBitacora = mongoose.Schema({
         default : Date.now(),
     },
 
-    usuarioId: {
+    usuario: {
         type: mongoose.Schema.Types.ObjectId,
         ref:'Usuario',
     }
